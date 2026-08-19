@@ -44,10 +44,10 @@
   border-radius: var(--radius-sm);
 }
 .row-actions button:hover { background: var(--surface-2); color: var(--text); }
-.row-actions button.delete:hover { color: var(--expense); background: rgba(201, 123, 116, 0.1); }
+.row-actions button.delete:hover { color: var(--expense); background: rgba(168, 59, 35, 0.08); }
 
-.type-pill-income { background: rgba(111, 174, 134, 0.15); color: var(--income); }
-.type-pill-expense { background: rgba(201, 123, 116, 0.15); color: var(--expense); }
+.type-pill-income { background: rgba(47, 92, 138, 0.12); color: var(--income); }
+.type-pill-expense { background: rgba(168, 59, 35, 0.1); color: var(--expense); }
 
 .muted-tag {
   font-size: 0.75rem;

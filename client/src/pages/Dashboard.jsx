@@ -8,19 +8,19 @@ import CircularProgress from '../components/CircularProgress';
 import { formatCurrency, shiftMonth, formatMonthLabel, currentMonth } from '../utils';
 import './Dashboard.css';
 
-const PALETTE = ['#5c7db3', '#6fae86', '#c97b74', '#c9a25c', '#8b7cc0', '#5aa3a3', '#c17fa0', '#8a9a5b'];
-const GRID_COLOR = '#2a2c33';
-const AXIS_COLOR = '#7d7f89';
-const MUTED_BAR = '#383a43';
-const ACCENT_BAR = '#7897cc';
+const PALETTE = ['#0b968b', '#8a3e76', '#c08a12', '#3f7a34', '#2f5c8a', '#a83b23'];
+const GRID_COLOR = '#ded6c2';
+const AXIS_COLOR = '#857a66';
+const MUTED_BAR = '#ded6c2';
+const ACCENT_BAR = '#17140f';
 
 const TOOLTIP_STYLE = {
-  background: '#1e2025',
-  border: '1px solid #2a2c33',
+  background: '#fbfaf4',
+  border: '1px solid #ded6c2',
   borderRadius: 8,
   fontSize: 12,
   fontFamily: "'JetBrains Mono', monospace",
-  color: '#f2f3f5',
+  color: '#17140f',
 };
 
 export default function Dashboard() {

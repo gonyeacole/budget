@@ -4,7 +4,7 @@ import Modal from '../components/Modal';
 import { formatCurrency } from '../utils';
 import './ListPage.css';
 
-const COLORS = ['#5c7db3', '#6fae86', '#c97b74', '#c9a25c', '#8b7cc0', '#5aa3a3', '#c17fa0', '#8a9a5b', '#c9c0a9', '#6b8fc2'];
+const COLORS = ['#0b968b', '#8a3e76', '#c08a12', '#3f7a34', '#2f5c8a', '#a83b23', '#857a66', '#17140f'];
 
 const emptyForm = { name: '', type: 'expense', monthly_limit: '', color: COLORS[0] };
 
