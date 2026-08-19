@@ -7,6 +7,12 @@
   gap: 0.75rem;
 }
 
+.page-head h1 {
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+}
+
 .filters {
   display: flex;
   gap: 0.75rem;
@@ -15,10 +21,11 @@
 }
 
 .filters select, .filters input {
-  padding: 0.45rem 0.6rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: #fff;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text);
 }
 
 .row-actions {
@@ -30,27 +37,21 @@
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   padding: 0.2rem 0.4rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
-.row-actions button:hover { background: #f0f1f5; color: var(--text); }
-.row-actions button.delete:hover { color: var(--expense); background: #fef2f2; }
+.row-actions button:hover { background: var(--surface-2); color: var(--text); }
+.row-actions button.delete:hover { color: var(--expense); background: rgba(201, 123, 116, 0.1); }
 
-.color-dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 0.4rem;
-}
-
-.type-pill-income { background: #dcfce7; color: #166534; }
-.type-pill-expense { background: #fee2e2; color: #991b1b; }
+.type-pill-income { background: rgba(111, 174, 134, 0.15); color: var(--income); }
+.type-pill-expense { background: rgba(201, 123, 116, 0.15); color: var(--expense); }
 
 .muted-tag {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
 }
 
-.inactive-row { opacity: 0.55; }
+.inactive-row { opacity: 0.5; }

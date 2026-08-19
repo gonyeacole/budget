@@ -4,7 +4,7 @@ import Modal from '../components/Modal';
 import { formatCurrency } from '../utils';
 import './ListPage.css';
 
-const COLORS = ['#4f46e5', '#0ea5e9', '#16a34a', '#d97706', '#dc2626', '#9333ea', '#0891b2', '#ca8a04', '#db2777', '#65a30d'];
+const COLORS = ['#5c7db3', '#6fae86', '#c97b74', '#c9a25c', '#8b7cc0', '#5aa3a3', '#c17fa0', '#8a9a5b', '#c9c0a9', '#6b8fc2'];
 
 const emptyForm = { name: '', type: 'expense', monthly_limit: '', color: COLORS[0] };
 
@@ -161,7 +161,7 @@ export default function Categories() {
                       height: 26,
                       borderRadius: '50%',
                       background: color,
-                      border: form.color === color ? '2px solid #1c2130' : '2px solid transparent',
+                      border: form.color === color ? '2px solid var(--text)' : '2px solid transparent',
                       padding: 0,
                     }}
                     aria-label={color}

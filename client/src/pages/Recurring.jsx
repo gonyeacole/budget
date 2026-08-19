@@ -129,7 +129,7 @@ export default function Recurring() {
                     {r.type === 'income' ? '+' : '-'}{formatCurrency(r.amount)}
                   </td>
                   <td>
-                    <span className={`pill ${r.active ? 'type-pill-income' : ''}`} style={!r.active ? { background: '#eef0f5', color: '#6b7280' } : undefined}>
+                    <span className={`pill ${r.active ? 'type-pill-income' : ''}`} style={!r.active ? { background: 'var(--surface-2)', color: 'var(--text-muted)' } : undefined}>
                       {r.active ? 'Active' : 'Paused'}
                     </span>
                   </td>

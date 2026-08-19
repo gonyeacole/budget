@@ -1,13 +1,27 @@
 import { useEffect, useState } from 'react';
 import {
-  PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Legend,
+  PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend,
+  BarChart, Bar, XAxis, CartesianGrid,
 } from 'recharts';
 import api from '../api';
+import CircularProgress from '../components/CircularProgress';
 import { formatCurrency, shiftMonth, formatMonthLabel, currentMonth } from '../utils';
 import './Dashboard.css';
 
-const PALETTE = ['#4f46e5', '#0ea5e9', '#16a34a', '#d97706', '#dc2626', '#9333ea', '#0891b2', '#ca8a04'];
+const PALETTE = ['#5c7db3', '#6fae86', '#c97b74', '#c9a25c', '#8b7cc0', '#5aa3a3', '#c17fa0', '#8a9a5b'];
+const GRID_COLOR = '#2a2c33';
+const AXIS_COLOR = '#7d7f89';
+const MUTED_BAR = '#383a43';
+const ACCENT_BAR = '#7897cc';
+
+const TOOLTIP_STYLE = {
+  background: '#1e2025',
+  border: '1px solid #2a2c33',
+  borderRadius: 8,
+  fontSize: 12,
+  fontFamily: "'JetBrains Mono', monospace",
+  color: '#f2f3f5',
+};
 
 export default function Dashboard() {
   const [month, setMonth] = useState(currentMonth());
@@ -35,110 +49,153 @@ export default function Dashboard() {
 
   const trendData = data.trend.map((t) => ({
     ...t,
-    label: formatMonthLabel(t.month).split(' ')[0].slice(0, 3),
+    label: formatMonthLabel(t.month).slice(0, 3),
   }));
+
+  const overBudgetCount = expenseCategories.filter((c) => c.monthly_limit && c.spent > c.monthly_limit).length;
+  const topCategory = [...expenseCategories].filter((c) => c.spent > 0).sort((a, b) => b.spent - a.spent)[0];
+
+  const totalLimit = expenseCategories.reduce((sum, c) => sum + (c.monthly_limit || 0), 0);
+  const totalSpentWithLimit = expenseCategories
+    .filter((c) => c.monthly_limit)
+    .reduce((sum, c) => sum + c.spent, 0);
+  const budgetPct = totalLimit > 0 ? (totalSpentWithLimit / totalLimit) * 100 : 0;
 
   return (
     <div>
-      <div className="month-nav">
-        <button onClick={() => setMonth(shiftMonth(month, -1))} aria-label="Previous month">‹</button>
-        <span className="month-label">{formatMonthLabel(month)}</span>
-        <button onClick={() => setMonth(shiftMonth(month, 1))} aria-label="Next month">›</button>
+      <div className="ticker">
+        <button className="ticker-nav-btn" onClick={() => setMonth(shiftMonth(month, -1))} aria-label="Previous month">‹</button>
+        <div className="ticker-item">
+          <span className="ticker-label">Month</span>
+          <span className="ticker-value">{formatMonthLabel(month)}</span>
+        </div>
+        <button className="ticker-nav-btn" onClick={() => setMonth(shiftMonth(month, 1))} aria-label="Next month">›</button>
+        <div className="ticker-item">
+          <span className="ticker-label">Income</span>
+          <span className="ticker-value amount-income">{formatCurrency(data.totalIncome)}</span>
+        </div>
+        <div className="ticker-item">
+          <span className="ticker-label">Expenses</span>
+          <span className="ticker-value amount-expense">{formatCurrency(data.totalExpenses)}</span>
+        </div>
+        <div className="ticker-item">
+          <span className="ticker-label">Net</span>
+          <span className="ticker-value" style={{ color: data.net >= 0 ? 'var(--income)' : 'var(--expense)' }}>
+            {formatCurrency(data.net)}
+          </span>
+        </div>
         {month !== currentMonth() && (
-          <button className="btn-secondary" style={{ width: 'auto', padding: '0 0.75rem' }} onClick={() => setMonth(currentMonth())}>
-            Today
-          </button>
+          <button className="btn-secondary ticker-today" onClick={() => setMonth(currentMonth())}>Today</button>
         )}
       </div>
 
-      <div className="summary-row">
-        <div className="card summary-card">
-          <div className="summary-label">Income</div>
-          <div className="summary-value amount-income">{formatCurrency(data.totalIncome)}</div>
-        </div>
-        <div className="card summary-card">
-          <div className="summary-label">Expenses</div>
-          <div className="summary-value amount-expense">{formatCurrency(data.totalExpenses)}</div>
-        </div>
-        <div className="card summary-card">
-          <div className="summary-label">Net</div>
-          <div className="summary-value" style={{ color: data.net >= 0 ? 'var(--income)' : 'var(--expense)' }}>
-            {formatCurrency(data.net)}
+      <div className="bento">
+        <div className="card tile tile-accent">
+          <div className="tile-label">Net &mdash; {formatMonthLabel(month).split(' ')[0]}</div>
+          <div>
+            <div className="tile-value">{formatCurrency(data.net)}</div>
+            <div className="tile-sub">income &minus; expenses</div>
           </div>
         </div>
-      </div>
 
-      <div className="charts-grid">
-        <div className="card chart-card">
-          <h3>Spending by category</h3>
+        <div className="card tile">
+          <div className="tile-label">Budget status</div>
+          <div>
+            <div className="tile-value">{overBudgetCount}</div>
+            <div className="tile-sub">{overBudgetCount === 1 ? 'category over budget' : 'categories over budget'}</div>
+          </div>
+        </div>
+
+        <div className="card tile">
+          <div className="tile-label">Top category</div>
+          <div>
+            <div className="tile-value" style={{ fontSize: '1.4rem' }}>{topCategory ? topCategory.name : '—'}</div>
+            <div className="tile-sub">{topCategory ? formatCurrency(topCategory.spent) + ' spent' : 'no spending yet'}</div>
+          </div>
+        </div>
+
+        <div className="card tile ring-tile">
+          <div className="tile-label" style={{ alignSelf: 'flex-start' }}>Budget used</div>
+          <div className="ring-wrap">
+            <CircularProgress pct={budgetPct} color={budgetPct > 100 ? 'var(--expense)' : 'var(--accent-strong)'} />
+            <div className="ring-center">
+              <span className="ring-value">{totalLimit > 0 ? `${Math.round(budgetPct)}%` : '—'}</span>
+              <span className="ring-caption">{totalLimit > 0 ? formatCurrency(totalLimit) + ' limit' : 'no limits set'}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="card tile chart-tile span-2">
+          <div className="tile-label">Last 6 months</div>
+          {trendData.every((t) => t.expense === 0) ? (
+            <div className="empty-state">No expense history yet.</div>
+          ) : (
+            <ResponsiveContainer width="100%" height={170}>
+              <BarChart data={trendData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={GRID_COLOR} vertical={false} />
+                <XAxis dataKey="label" stroke={AXIS_COLOR} fontSize={11} tickLine={false} axisLine={false} />
+                <Tooltip
+                  contentStyle={TOOLTIP_STYLE}
+                  formatter={(value) => formatCurrency(value)}
+                  cursor={{ fill: 'rgba(255,255,255,0.04)' }}
+                />
+                <Bar dataKey="expense" name="Expenses" radius={[4, 4, 0, 0]}>
+                  {trendData.map((t) => (
+                    <Cell key={t.month} fill={t.month === month ? ACCENT_BAR : MUTED_BAR} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+
+        <div className="card tile chart-tile span-2">
+          <div className="tile-label">Spending by category</div>
           {pieData.length === 0 ? (
             <div className="empty-state">No expenses recorded yet this month.</div>
           ) : (
-            <ResponsiveContainer width="100%" height={260}>
+            <ResponsiveContainer width="100%" height={190}>
               <PieChart>
-                <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={55} outerRadius={90} paddingAngle={2}>
+                <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={48} outerRadius={78} paddingAngle={2}>
                   {pieData.map((entry, i) => (
-                    <Cell key={entry.name} fill={entry.color || PALETTE[i % PALETTE.length]} />
+                    <Cell key={entry.name} fill={entry.color || PALETTE[i % PALETTE.length]} stroke="var(--surface)" />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => formatCurrency(value)} />
-                <Legend />
+                <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(value) => formatCurrency(value)} />
+                <Legend wrapperStyle={{ fontSize: 11, color: 'var(--text-muted)' }} />
               </PieChart>
             </ResponsiveContainer>
           )}
         </div>
 
-        <div className="card chart-card">
-          <h3>Budget vs. actual</h3>
+        <div className="card tile span-4">
+          <div className="tile-label" style={{ marginBottom: '0.5rem' }}>Budget vs. actual</div>
           {expenseCategories.length === 0 ? (
             <div className="empty-state">No expense categories yet.</div>
           ) : (
-            <div className="budget-list">
-              {expenseCategories.map((c) => {
-                const limit = c.monthly_limit;
-                const pct = limit ? Math.min(100, (c.spent / limit) * 100) : null;
-                const over = limit && c.spent > limit;
-                return (
-                  <div key={c.id}>
-                    <div className="budget-row-head">
-                      <span>{c.name}</span>
-                      <span className={over ? 'over' : ''}>
-                        {formatCurrency(c.spent)}{limit ? ` / ${formatCurrency(limit)}` : ''}
-                      </span>
-                    </div>
-                    {limit ? (
-                      <div className="progress-track">
-                        <div
-                          className="progress-fill"
-                          style={{ width: `${pct}%`, background: over ? 'var(--expense)' : c.color }}
-                        />
-                      </div>
-                    ) : (
-                      <div className="empty-state" style={{ padding: 0, textAlign: 'left', fontSize: '0.8rem' }}>
-                        No limit set
-                      </div>
-                    )}
+            expenseCategories.map((c) => {
+              const limit = c.monthly_limit;
+              const pct = limit ? Math.min(100, (c.spent / limit) * 100) : 0;
+              const over = limit && c.spent > limit;
+              return (
+                <div className="ledger-row" key={c.id}>
+                  <div className="ledger-name">
+                    <span className="color-dot" style={{ background: c.color }} />
+                    {c.name}
                   </div>
-                );
-              })}
-            </div>
+                  <div className={`ledger-amount ${over ? 'amount-expense' : ''}`}>{formatCurrency(c.spent)}</div>
+                  <div className="progress-track">
+                    <div
+                      className="progress-fill"
+                      style={{ width: `${pct}%`, background: over ? 'var(--expense)' : c.color }}
+                    />
+                  </div>
+                  <div className="ledger-pct">{limit ? `${Math.round((c.spent / limit) * 100)}%` : '—'}</div>
+                </div>
+              );
+            })
           )}
         </div>
-      </div>
-
-      <div className="card chart-card">
-        <h3>Last 6 months</h3>
-        <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={trendData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#eef0f5" />
-            <XAxis dataKey="label" stroke="#6b7280" fontSize={12} />
-            <YAxis stroke="#6b7280" fontSize={12} tickFormatter={(v) => `$${v}`} />
-            <Tooltip formatter={(value) => formatCurrency(value)} />
-            <Legend />
-            <Line type="monotone" dataKey="income" name="Income" stroke="#16a34a" strokeWidth={2} dot={false} />
-            <Line type="monotone" dataKey="expense" name="Expense" stroke="#dc2626" strokeWidth={2} dot={false} />
-          </LineChart>
-        </ResponsiveContainer>
       </div>
     </div>
   );
