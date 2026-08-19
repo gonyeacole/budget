@@ -1,0 +1,77 @@
+.month-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.month-nav button {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  font-size: 1rem;
+}
+.month-nav button:hover { background: #f0f1f5; }
+
+.month-nav .month-label {
+  font-weight: 700;
+  font-size: 1.15rem;
+  min-width: 160px;
+}
+
+.summary-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-card .summary-label {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.summary-card .summary-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.chart-card h3 { font-size: 0.95rem; margin-bottom: 1rem; }
+
+.budget-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.budget-row-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  margin-bottom: 0.3rem;
+}
+
+.budget-row-head .over { color: var(--expense); font-weight: 700; }
+
+.empty-state {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+@media (max-width: 800px) {
+  .summary-row { grid-template-columns: 1fr; }
+  .charts-grid { grid-template-columns: 1fr; }
+}
