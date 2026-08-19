@@ -1,4 +1,4 @@
-# Our Budget
+# Fundwell
 
 A simple shared household budgeting app. Track income and expenses, set monthly
 spending limits per category, see a dashboard with charts, and set up recurring

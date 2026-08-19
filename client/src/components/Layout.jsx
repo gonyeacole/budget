@@ -9,7 +9,7 @@ export default function Layout() {
     <div className="app-shell">
       <header className="topbar">
         <div className="topbar-inner">
-          <div className="brand">💰 Our Budget</div>
+          <div className="brand">💰 Fundwell</div>
           <nav className="nav">
             <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>
               Dashboard
